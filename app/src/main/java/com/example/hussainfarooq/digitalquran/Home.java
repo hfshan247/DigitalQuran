@@ -1,6 +1,5 @@
 package com.example.hussainfarooq.digitalquran;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,14 +13,15 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.hussainfarooq.digitalquran.model.Quran;
+import com.example.hussainfarooq.digitalquran.model.SurahMeta;
+import com.example.hussainfarooq.digitalquran.util.StableArrayAdapter;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class Home extends AppCompatActivity {
@@ -86,16 +86,12 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        ListView mSurahList = findViewById(R.id.surah_list);
-        String[] values = new String[]{"Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile"};
+        Quran mQuran = Quran.getInstance(this);
 
+        ListView mSurahList = findViewById(R.id.surah_list);
         final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
+        for (SurahMeta meta : mQuran.getMetadata()) {
+            list.add(meta.getTitle());
         }
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
@@ -105,16 +101,9 @@ public class Home extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                Intent mSurahIntent = new Intent(Home.this, SurahActivity.class);
+                mSurahIntent.putExtra("surahIndex", position + 1);
+                startActivity(mSurahIntent);
             }
         });
 
@@ -159,7 +148,6 @@ public class Home extends AppCompatActivity {
                 //Alert
 
 
-
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Home.this);
                 alertDialogBuilder.setTitle("Add Topic");
                 //alertDialogBuilder.setMessage("Are you sure,You wanted to make decision");
@@ -170,7 +158,7 @@ public class Home extends AppCompatActivity {
                 inputTopic.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
                 alertDialogBuilder.setView(inputTopic);
 
-                alertDialogBuilder.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
@@ -179,15 +167,15 @@ public class Home extends AppCompatActivity {
                         //topicsList.add(topic);
                         tpicsAdapter.notifyDataSetChanged();
 
-                        Toast.makeText(Home.this,"Topic Added : "+topic,Toast.LENGTH_LONG).show();
+                        Toast.makeText(Home.this, "Topic Added : " + topic, Toast.LENGTH_LONG).show();
 
                     }
                 });
 
-                alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(Home.this,"Topic Added : Cancelled by User",Toast.LENGTH_LONG).show();
+                        Toast.makeText(Home.this, "Topic Added : Cancelled by User", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -217,31 +205,6 @@ public class Home extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             //mImageView.setImageBitmap(imageBitmap);
         }
-    }
-
-    private class StableArrayAdapter extends ArrayAdapter<String> {
-
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<String> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            String item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
     }
 
 }
