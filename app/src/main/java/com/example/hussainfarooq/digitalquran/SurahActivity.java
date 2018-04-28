@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.hussainfarooq.digitalquran.model.Quran;
 import com.example.hussainfarooq.digitalquran.model.Surah;
-import com.example.hussainfarooq.digitalquran.util.StableArrayAdapter;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class SurahActivity extends AppCompatActivity {
         for (Map.Entry<String, String> entry : verses.entrySet()) {
             list.add(entry.getValue());
         }
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
+        final ArrayAdapter adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, list);
         mAyaList.setAdapter(adapter);
         mAyaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

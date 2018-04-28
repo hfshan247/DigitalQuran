@@ -13,13 +13,14 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.hussainfarooq.digitalquran.model.Quran;
 import com.example.hussainfarooq.digitalquran.model.SurahMeta;
-import com.example.hussainfarooq.digitalquran.util.StableArrayAdapter;
+import com.example.hussainfarooq.digitalquran.model.Topic;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 public class Home extends AppCompatActivity {
 
 
-    public ArrayList<String> topicsList;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -72,13 +72,12 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        // Configure navigation bar
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        //Camera
+        // Set up camera button
         findViewById(R.id.camera_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,17 +85,19 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        // Display Quran data (Surahs and Topics)
         Quran mQuran = Quran.getInstance(this);
 
-        ListView mSurahList = findViewById(R.id.surah_list);
-        final ArrayList<String> list = new ArrayList<String>();
-        for (SurahMeta meta : mQuran.getMetadata()) {
-            list.add(meta.getTitle());
+        ListView mSurahListView = findViewById(R.id.surah_list);
+        final ArrayList<String> mSurahList = new ArrayList<String>();
+        for (SurahMeta mSurahMeta : mQuran.getMetadata()) {
+            mSurahList.add(mSurahMeta.getTitle());
         }
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        mSurahList.setAdapter(adapter);
-        mSurahList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        final ArrayAdapter<String> mSurahAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, mSurahList);
+        mSurahListView.setAdapter(mSurahAdapter);
+        mSurahListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
@@ -108,45 +109,30 @@ public class Home extends AppCompatActivity {
         });
 
 
-        final ListView mTopicList = findViewById(R.id.topics_list);
-        String[] topics = new String[]{"توحید", "رسالت", "الکتب", "الملائکہ", "قیامت", " نماز", "روزہ ", "زکوٰة ", "حج"};
-
-        topicsList = new ArrayList<String>();
-        for (int i = 0; i < topics.length; ++i) {
-            topicsList.add(topics[i]);
+        final ListView mTopicListView = findViewById(R.id.topics_list);
+        final ArrayList<String> mTopicsList = new ArrayList<>();
+        for (Topic topic : mQuran.getTopics()) {
+            mTopicsList.add(topic.getName());
         }
-        final StableArrayAdapter tpicsAdapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, topicsList);
-        mTopicList.setAdapter(tpicsAdapter);
-        mTopicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        final ArrayAdapter<String> mTopicAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, mTopicsList);
+        mTopicListView.setAdapter(mTopicAdapter);
+        mTopicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                list.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                // TODO: Display aya in this topic
             }
 
         });
 
-
-        //Topics
+        // Topics
         findViewById(R.id.add_topic_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Toast.makeText(Home.this, "Adding Topic", Toast.LENGTH_SHORT).show();
-
-                //Alert
-
 
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Home.this);
                 alertDialogBuilder.setTitle("Add Topic");
@@ -154,8 +140,9 @@ public class Home extends AppCompatActivity {
 
                 // Set up the input
                 final EditText inputTopic = new EditText(Home.this);
+
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                inputTopic.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                inputTopic.setInputType(InputType.TYPE_CLASS_TEXT);
                 alertDialogBuilder.setView(inputTopic);
 
                 alertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -164,8 +151,7 @@ public class Home extends AppCompatActivity {
 
                         //Add Topic
                         String topic = inputTopic.getText().toString();
-                        //topicsList.add(topic);
-                        tpicsAdapter.notifyDataSetChanged();
+                        mTopicAdapter.add(topic);
 
                         Toast.makeText(Home.this, "Topic Added : " + topic, Toast.LENGTH_LONG).show();
 
@@ -181,14 +167,8 @@ public class Home extends AppCompatActivity {
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
-
-                //End Alert
-
-
             }
         });
-
-
     }
 
     private void dispatchTakePictureIntent() {
