@@ -1,18 +1,23 @@
 package com.example.hussainfarooq.digitalquran;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +27,7 @@ import java.util.List;
 public class Home extends AppCompatActivity {
 
 
+    public ArrayList<String> topicsList;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -31,24 +37,28 @@ public class Home extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_quran:
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
+                    findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.VISIBLE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
                     return true;
 
                 case R.id.navigation_topics:
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
+                    findViewById(R.id.add_topic_button).setVisibility(View.VISIBLE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.VISIBLE);
                     return true;
 
                 case R.id.navigation_search:
                     findViewById(R.id.camera_button).setVisibility(View.VISIBLE);
+                    findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
                     return true;
 
                 case R.id.navigation_settings:
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
+                    findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
                     return true;
@@ -68,6 +78,7 @@ public class Home extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        //Camera
         findViewById(R.id.camera_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,10 +119,10 @@ public class Home extends AppCompatActivity {
         });
 
 
-        ListView mTopicList = findViewById(R.id.topics_list);
-        String[] topics = new String[]{"Namaz", "Hajj"};
+        final ListView mTopicList = findViewById(R.id.topics_list);
+        String[] topics = new String[]{"توحید", "رسالت", "الکتب", "الملائکہ", "قیامت", " نماز", "روزہ ", "زکوٰة ", "حج"};
 
-        final ArrayList<String> topicsList = new ArrayList<String>();
+        topicsList = new ArrayList<String>();
         for (int i = 0; i < topics.length; ++i) {
             topicsList.add(topics[i]);
         }
@@ -136,6 +147,60 @@ public class Home extends AppCompatActivity {
             }
 
         });
+
+
+        //Topics
+        findViewById(R.id.add_topic_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(Home.this, "Adding Topic", Toast.LENGTH_SHORT).show();
+
+                //Alert
+
+
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Home.this);
+                alertDialogBuilder.setTitle("Add Topic");
+                //alertDialogBuilder.setMessage("Are you sure,You wanted to make decision");
+
+                // Set up the input
+                final EditText inputTopic = new EditText(Home.this);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                inputTopic.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                alertDialogBuilder.setView(inputTopic);
+
+                alertDialogBuilder.setPositiveButton("Add",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        //Add Topic
+                        String topic = inputTopic.getText().toString();
+                        //topicsList.add(topic);
+                        tpicsAdapter.notifyDataSetChanged();
+
+                        Toast.makeText(Home.this,"Topic Added : "+topic,Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+                alertDialogBuilder.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(Home.this,"Topic Added : Cancelled by User",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                //End Alert
+
+
+            }
+        });
+
+
     }
 
     private void dispatchTakePictureIntent() {
