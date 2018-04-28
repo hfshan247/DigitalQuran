@@ -24,10 +24,12 @@ public class Quran {
     }
 
     private SurahMeta[] metadata;
+    private Topic[] topics;
 
     private Quran(Activity activity) {
         try {
             metadata = loadMetadata(activity);
+            topics = loadTopics(activity);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -39,8 +41,18 @@ public class Quran {
         return gson.fromJson(json, SurahMeta[].class);
     }
 
+    private Topic[] loadTopics(Activity activity) throws IOException {
+        String json = loadJsonString(activity, "quran/topics.json");
+        Gson gson = new Gson();
+        return gson.fromJson(json, Topic[].class);
+    }
+
     public SurahMeta[] getMetadata() {
         return metadata;
+    }
+
+    public Topic[] getTopics() {
+        return topics;
     }
 
     public Surah getSurah(Activity activity, int surahIndex) {
