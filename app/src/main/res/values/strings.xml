@@ -11,4 +11,17 @@
     <string name="title_Settings">Settings</string>
     <string name="title_Starred">Starred</string>
 
+
+    <string-array name="array_country">
+        <item>بسم الله الرحمن الرحيم</item>
+        <item>الحمد لله رب العالمين</item>
+        <item>لرحمن الرحيم</item>
+        <item>الرحمن الرحيم</item>
+        <item>مالك يوم الدين</item>
+        <item>إياك نعبد وإياك نستعين</item>
+        <item>اهدنا الصراط المستقيم</item>
+        <item>صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين</item>
+    </string-array>
+
+
 </resources>
