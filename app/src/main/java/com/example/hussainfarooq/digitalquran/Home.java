@@ -86,7 +86,7 @@ public class Home extends AppCompatActivity {
         });
 
         // Display Quran data (Surahs and Topics)
-        Quran mQuran = Quran.getInstance(this);
+        final Quran mQuran = Quran.getInstance(this);
 
         ListView mSurahListView = findViewById(R.id.surah_list);
         final ArrayList<String> mSurahList = new ArrayList<String>();
@@ -132,40 +132,47 @@ public class Home extends AppCompatActivity {
         findViewById(R.id.add_topic_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Home.this, "Adding Topic", Toast.LENGTH_SHORT).show();
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Home.this);
-                alertDialogBuilder.setTitle("Add Topic");
-                //alertDialogBuilder.setMessage("Are you sure,You wanted to make decision");
-
-                // Set up the input
                 final EditText inputTopic = new EditText(Home.this);
-
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                 inputTopic.setInputType(InputType.TYPE_CLASS_TEXT);
-                alertDialogBuilder.setView(inputTopic);
 
-                alertDialogBuilder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(Home.this)
+                        .setTitle("Add Topic")
+                        .setView(inputTopic)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(Home.this, "Topic Added : Cancelled by User", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
 
-                        //Add Topic
-                        String topic = inputTopic.getText().toString();
-                        mTopicAdapter.add(topic);
+                                //Add Topic
+                                String topic = inputTopic.getText().toString().trim();
+                                if (!topic.isEmpty()) {
+                                    boolean exists = false;
+                                    for (Topic t : mQuran.getTopics()) {
+                                        if (t.getName().equalsIgnoreCase(topic)) {
+                                            exists = true;
+                                            break;
+                                        }
+                                    }
 
-                        Toast.makeText(Home.this, "Topic Added : " + topic, Toast.LENGTH_LONG).show();
+                                    if (!exists) {
+                                        mTopicAdapter.add(topic);
+                                        mQuran.addTopic(Home.this, topic);
+                                    } else {
+                                        Toast.makeText(Home.this, "Topic \'" + topic + "\' already exists!", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    Toast.makeText(Home.this, "Name cannot be empty!", Toast.LENGTH_LONG).show();
+                                }
 
-                    }
-                });
+                            }
+                        });
 
-                alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(Home.this, "Topic Added : Cancelled by User", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
+                AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
         });

@@ -1,6 +1,8 @@
 package com.example.hussainfarooq.digitalquran.model;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
@@ -42,7 +44,12 @@ public class Quran {
     }
 
     private Topic[] loadTopics(Activity activity) throws IOException {
-        String json = loadJsonString(activity, "quran/topics.json");
+        SharedPreferences prefs = activity.getSharedPreferences("DigitalQuran", Context.MODE_PRIVATE);
+        String json = prefs.getString("topics", null);
+        if (json == null) {
+            json = loadJsonString(activity, "quran/topics.json");
+            prefs.edit().putString("topics", json).apply();
+        }
         Gson gson = new Gson();
         return gson.fromJson(json, Topic[].class);
     }
@@ -52,6 +59,23 @@ public class Quran {
     }
 
     public Topic[] getTopics() {
+        return topics;
+    }
+
+    public Topic[] addTopic(Activity activity, String name) {
+        SharedPreferences prefs = activity.getSharedPreferences("DigitalQuran", Context.MODE_PRIVATE);
+        String json = prefs.getString("topics", null);
+        if (json != null) {
+            json = json.substring(0, json.length() - 1);
+            json += ",{ \"name\":\"" + name + "\", \"aya\":[]}]";
+            prefs.edit().putString("topics", json).apply();
+        }
+        prefs.edit().putString("topics", json).apply();
+        try {
+            topics = loadTopics(activity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return topics;
     }
 
