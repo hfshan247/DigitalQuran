@@ -1,5 +1,11 @@
 package com.example.hussainfarooq.digitalquran.model;
 
+import com.google.gson.internal.LinkedTreeMap;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author saifkhichi96
  * @version 1.0
@@ -13,6 +19,8 @@ public class Surah {
     private Object verse;
     private int count;
     private Object juz;
+
+    private transient ArrayList<Ayat> verses = new ArrayList<>();
 
     public String getIndex() {
         return index;
@@ -28,6 +36,25 @@ public class Surah {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ArrayList<Ayat> getVerses() {
+        if (verses.size() == 0) {
+            LinkedTreeMap<String, String> verses = (LinkedTreeMap<String, String>) verse;
+            for (Map.Entry<String, String> entry : verses.entrySet()) {
+                try {
+                    Ayat ayat = new Ayat();
+                    ayat.setSurah(getName());
+                    ayat.setSurahIndex(getIndex());
+                    ayat.setIndex(Integer.parseInt(entry.getKey().split("_")[1]));
+                    ayat.setText(entry.getValue());
+                    this.verses.add(ayat);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return verses;
     }
 
     public Object getVerse() {
@@ -53,4 +80,15 @@ public class Surah {
     public void setJuz(Object juz) {
         this.juz = juz;
     }
+
+    public List<Ayat> search(String keyword) {
+        List<Ayat> searchResult = new ArrayList<>();
+        for (Ayat ayat : verses) {
+            if (ayat.getText().contains(keyword)) {
+                searchResult.add(ayat);
+            }
+        }
+        return searchResult;
+    }
+
 }
