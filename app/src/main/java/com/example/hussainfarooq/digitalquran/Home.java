@@ -10,12 +10,15 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.hussainfarooq.digitalquran.model.Quran;
@@ -23,10 +26,12 @@ import com.example.hussainfarooq.digitalquran.model.SurahMeta;
 import com.example.hussainfarooq.digitalquran.model.Topic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Home extends AppCompatActivity {
 
+    ArrayAdapter<String> adapter;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -36,31 +41,46 @@ public class Home extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_quran:
+                    setTitle("Digital Quran");
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.VISIBLE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
+                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.menuSearch).setVisibility(View.GONE);
+
                     return true;
 
                 case R.id.navigation_topics:
+                    // Set Activity Title
+                    setTitle("Topics");
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
                     findViewById(R.id.add_topic_button).setVisibility(View.VISIBLE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.VISIBLE);
+                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.menuSearch).setVisibility(View.GONE);
+
                     return true;
 
                 case R.id.navigation_search:
+                    setTitle("Search Quran");
                     findViewById(R.id.camera_button).setVisibility(View.VISIBLE);
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
+                    findViewById(R.id.listViewCountry).setVisibility(View.VISIBLE);
+                    findViewById(R.id.menuSearch).setVisibility(View.VISIBLE);
                     return true;
 
                 case R.id.navigation_settings:
+                    setTitle("Settings");
                     findViewById(R.id.camera_button).setVisibility(View.GONE);
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
+                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.menuSearch).setVisibility(View.GONE);
                     return true;
             }
             return false;
@@ -169,7 +189,18 @@ public class Home extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+
+        //Search ListView
+        ListView lv = (ListView)findViewById(R.id.listViewCountry);
+        ArrayList<String> arrayCountry = new ArrayList<>();
+        arrayCountry.addAll(Arrays.asList(getResources().getStringArray(R.array.array_country)));
+
+        adapter = new ArrayAdapter<String>(Home.this,
+                android.R.layout.simple_list_item_1,
+                arrayCountry);
+        lv.setAdapter(adapter);
     }
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -187,4 +218,29 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    //Search
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem item = menu.findItem(R.id.menuSearch);
+        SearchView searchView = (SearchView)item.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
 }
