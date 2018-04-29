@@ -21,17 +21,16 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.hussainfarooq.digitalquran.model.Ayat;
 import com.example.hussainfarooq.digitalquran.model.Quran;
 import com.example.hussainfarooq.digitalquran.model.SurahMeta;
 import com.example.hussainfarooq.digitalquran.model.Topic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 
 public class Home extends AppCompatActivity {
-
-    ArrayAdapter<String> adapter;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -46,7 +45,7 @@ public class Home extends AppCompatActivity {
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.VISIBLE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
-                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.search_results).setVisibility(View.GONE);
                     findViewById(R.id.menuSearch).setVisibility(View.GONE);
 
                     return true;
@@ -58,7 +57,7 @@ public class Home extends AppCompatActivity {
                     findViewById(R.id.add_topic_button).setVisibility(View.VISIBLE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.VISIBLE);
-                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.search_results).setVisibility(View.GONE);
                     findViewById(R.id.menuSearch).setVisibility(View.GONE);
 
                     return true;
@@ -69,7 +68,7 @@ public class Home extends AppCompatActivity {
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
-                    findViewById(R.id.listViewCountry).setVisibility(View.VISIBLE);
+                    findViewById(R.id.search_results).setVisibility(View.VISIBLE);
                     findViewById(R.id.menuSearch).setVisibility(View.VISIBLE);
                     return true;
 
@@ -79,7 +78,7 @@ public class Home extends AppCompatActivity {
                     findViewById(R.id.add_topic_button).setVisibility(View.GONE);
                     findViewById(R.id.surah_list).setVisibility(View.GONE);
                     findViewById(R.id.topics_list).setVisibility(View.GONE);
-                    findViewById(R.id.listViewCountry).setVisibility(View.GONE);
+                    findViewById(R.id.search_results).setVisibility(View.GONE);
                     findViewById(R.id.menuSearch).setVisibility(View.GONE);
                     return true;
             }
@@ -196,16 +195,6 @@ public class Home extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-
-        //Search ListView
-        ListView lv = (ListView)findViewById(R.id.listViewCountry);
-        ArrayList<String> arrayCountry = new ArrayList<>();
-        arrayCountry.addAll(Arrays.asList(getResources().getStringArray(R.array.array_country)));
-
-        adapter = new ArrayAdapter<String>(Home.this,
-                android.R.layout.simple_list_item_1,
-                arrayCountry);
-        lv.setAdapter(adapter);
     }
 
 
@@ -233,17 +222,20 @@ public class Home extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
         MenuItem item = menu.findItem(R.id.menuSearch);
-        SearchView searchView = (SearchView)item.getActionView();
+        SearchView searchView = (SearchView) item.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                ListView searchResultsView = findViewById(R.id.search_results);
+                List<Ayat> ayats = Quran.getInstance(Home.this).search(s);
+                AyatAdapter adapter = new AyatAdapter(ayats, Home.this);
+                searchResultsView.setAdapter(adapter);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
                 return false;
             }
         });

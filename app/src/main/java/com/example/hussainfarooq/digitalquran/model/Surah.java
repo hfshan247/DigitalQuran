@@ -83,7 +83,7 @@ public class Surah {
 
     public List<Ayat> search(String keyword) {
         List<Ayat> searchResult = new ArrayList<>();
-        for (Ayat ayat : verses) {
+        for (Ayat ayat : getVerses()) {
             if (ayat.getText().contains(keyword)) {
                 searchResult.add(ayat);
             }
