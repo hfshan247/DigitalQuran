@@ -84,7 +84,28 @@ public class Surah {
     public List<Ayat> search(String keyword) {
         List<Ayat> searchResult = new ArrayList<>();
         for (Ayat ayat : getVerses()) {
-            if (ayat.getText().contains(keyword)) {
+            if (ayat.getIndex() == 0 && Integer.parseInt(getIndex()) != 1) {
+                continue;
+            }
+
+            String ayatText = ayat.getText();
+
+            // Remove a'raab
+            ayatText = ayatText.replace("ُ", "");
+            ayatText = ayatText.replace("ِ", "");
+            ayatText = ayatText.replace("َ", "");
+            ayatText = ayatText.replace("ْ", "");
+            ayatText = ayatText.replace("ّ", "");
+            ayatText = ayatText.replace("ٰ", "");
+
+            keyword = keyword.replace("ُ", "");
+            keyword = keyword.replace("ِ", "");
+            keyword = keyword.replace("َ", "");
+            keyword = keyword.replace("ْ", "");
+            keyword = keyword.replace("ّ", "");
+            keyword = keyword.replace("ٰ", "");
+
+            if (ayatText.contains(keyword)) {
                 searchResult.add(ayat);
             }
         }
