@@ -13,14 +13,20 @@ import com.example.hussainfarooq.digitalquran.model.Surah;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class SurahActivity extends AppCompatActivity {
+
+    //ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surah);
+
+        // Surah Search Button
+        // findViewById(R.id.menuSearch).setVisibility(View.VISIBLE);
 
         // Load Surah
         Intent mIntent = getIntent();
@@ -42,7 +48,8 @@ public class SurahActivity extends AppCompatActivity {
         for (Map.Entry<String, String> entry : verses.entrySet()) {
             list.add(entry.getValue());
         }
-        final ArrayAdapter adapter = new ArrayAdapter<>(this,
+
+        ArrayAdapter adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, list);
         mAyaList.setAdapter(adapter);
         mAyaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -53,5 +60,16 @@ public class SurahActivity extends AppCompatActivity {
                 // TODO: Handle clicks on ayat
             }
         });
+
+        //Search in Surah List
+//        ListView lv = (ListView)findViewById(R.id.listViewCountry);
+//        ArrayList<String> arrayCountry = new ArrayList<>();
+//        arrayCountry.addAll(Arrays.asList(getResources().getStringArray(R.array.array_country)));
+//
+//        adapter = new ArrayAdapter<String>(SurahActivity.this,
+//                android.R.layout.simple_list_item_1,
+//                arrayCountry);
+//        lv.setAdapter(adapter);
+        //
     }
 }

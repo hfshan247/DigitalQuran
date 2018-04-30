@@ -90,20 +90,87 @@ public class Surah {
 
             String ayatText = ayat.getText();
 
-            // Remove a'raab
+            //Ayat
+            //Arabic Urdu Conflicts
+            ayatText = ayatText.replace("کٰ", "ك");
+            ayatText = ayatText.replace("کٰ", "ك");
+            ayatText = ayatText.replace("ہٰ", "ه");
+            ayatText = ayatText.replace("ءٰ", "ء");
+
+            // Remove a'raab (Special Characters)
             ayatText = ayatText.replace("ُ", "");
             ayatText = ayatText.replace("ِ", "");
             ayatText = ayatText.replace("َ", "");
             ayatText = ayatText.replace("ْ", "");
             ayatText = ayatText.replace("ّ", "");
+            ayatText = ayatText.replace("لآٰ", "لا");
+            ayatText = ayatText.replace("لإٰ", "لا");
+            ayatText = ayatText.replace("لآٰ", "لا");
             ayatText = ayatText.replace("ٰ", "");
+            ayatText = ayatText.replace("ٰ", "");
+            ayatText = ayatText.replace("ُ", "");
+            ayatText = ayatText.replace(".ِ", "");
+            ayatText = ayatText.replace(",َ", "");
+            ayatText = ayatText.replace("’ْ", "");
+            ayatText = ayatText.replace("ّ", "");
+            ayatText = ayatText.replace("آٰ", "ا");
+            ayatText = ayatText.replace("إ", "ا");
+            ayatText = ayatText.replace("إ", "ا");
+            ayatText = ayatText.replace("ْ", "");
+            ayatText = ayatText.replace("~", "");
+            ayatText = ayatText.replace("\"", "");
+            ayatText = ayatText.replace("", "");
+            ayatText = ayatText.replace(":", "");
+            ayatText = ayatText.replace("", "");
+            ayatText = ayatText.replace("،", "");
+            ayatText = ayatText.replace("ٍ", "");
+            ayatText = ayatText.replace("ـ", "");
+            ayatText = ayatText.replace("أ", "");
+            ayatText = ayatText.replace("ِ", "");
+            ayatText = ayatText.replace("؛", "");
+            ayatText = ayatText.replace("‘", "");
+            ayatText = ayatText.replace("‘", "");
+            ayatText = ayatText.replace("ٌ", "");
+            ayatText = ayatText.replace("ُ", "");
+            ayatText = ayatText.replace("", "");
+            ayatText = ayatText.replace("ً", "");
+            ayatText = ayatText.replace("َ", "");
 
+
+            //Searched
             keyword = keyword.replace("ُ", "");
-            keyword = keyword.replace("ِ", "");
-            keyword = keyword.replace("َ", "");
-            keyword = keyword.replace("ْ", "");
+            keyword = keyword.replace(".ِ", "");
+            keyword = keyword.replace(",َ", "");
+            keyword = keyword.replace("’ْ", "");
             keyword = keyword.replace("ّ", "");
-            keyword = keyword.replace("ٰ", "");
+            keyword = keyword.replace("آٰ", "ا");
+            keyword = keyword.replace("إ", "ا");
+            keyword = keyword.replace("إ", "ا");
+            keyword = keyword.replace("ْ", "");
+            keyword = keyword.replace("~", "");
+            keyword = keyword.replace("\"", "");
+            keyword = keyword.replace("", "");
+            keyword = keyword.replace(":", "");
+            keyword = keyword.replace("", "");
+            keyword = keyword.replace("،", "");
+            keyword = keyword.replace("ٍ", "");
+            keyword = keyword.replace("ـ", "");
+            keyword = keyword.replace("أ", "");
+            keyword = keyword.replace("ِ", "");
+            keyword = keyword.replace("؛", "");
+            keyword = keyword.replace("‘", "");
+            keyword = keyword.replace("‘", "");
+            keyword = keyword.replace("ٌ", "");
+            keyword = keyword.replace("ُ", "");
+            keyword = keyword.replace("", "");
+            keyword = keyword.replace("ً", "");
+            keyword = keyword.replace("َ", "");
+
+            // Mistakes Removal
+            keyword = keyword.replace("ي", "ي");
+            keyword = keyword.replace("الرحملن", "الرحمن");
+            keyword = keyword.replace("الرحيم", "الرحيم");
+            keyword = keyword.replace("  ", " ");
 
             if (ayatText.contains(keyword)) {
                 searchResult.add(ayat);
