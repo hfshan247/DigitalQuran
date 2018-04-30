@@ -22,5 +22,7 @@
         <item>صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين</item>
     </string-array>
 
+    <string name="call_ocr_api">Call OCR API</string>
+    <string name="ocr_api_result">OCR API Result</string>
 
 </resources>
