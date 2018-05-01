@@ -507,12 +507,11 @@ public class Home extends AppCompatActivity implements IOCRCallBack {
                             words[i] = words[i].replaceAll("[^\\w]", "");
                             List<Ayat> ayats_2 = Quran.getInstance(Home.this).search(words[i]);
 
-                            int previous = ayats.size();
                             for (Ayat ayat : ayats_2) {
                                 if (!ayats.contains(ayat)) {
                                     ayats.add(ayat);
                                 }
-                                if(ayats.size()>(previous+1)){
+                                if(ayats.size()>5){
                                     break;
                                 }
                             }

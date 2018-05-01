@@ -5,6 +5,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -21,13 +22,18 @@
         <activity
             android:name=".Home"
             android:label="@string/app_name">
+
+        </activity>
+        <activity android:name=".SurahActivity" />
+
+        <activity
+            android:name=".SplashScreen"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SurahActivity"></activity>
     </application>
 
 </manifest>
