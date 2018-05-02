@@ -1,6 +1,7 @@
 package com.example.hussainfarooq.digitalquran;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -26,6 +27,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -36,6 +39,7 @@ import android.widget.Toast;
 
 import com.example.hussainfarooq.digitalquran.OCR.ParsedResults;
 import com.example.hussainfarooq.digitalquran.OCR.Rootobject;
+import com.example.hussainfarooq.digitalquran.Search.Search;
 import com.example.hussainfarooq.digitalquran.model.Ayat;
 import com.example.hussainfarooq.digitalquran.model.Quran;
 import com.example.hussainfarooq.digitalquran.model.SurahMeta;
@@ -65,6 +69,8 @@ public class Home extends AppCompatActivity implements IOCRCallBack {
     private String mLanguage;
     private TextView mTxtResult;
     private IOCRCallBack mIOCRCallBack;
+    private ProgressDialog mProgressDialog;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -130,6 +136,8 @@ public class Home extends AppCompatActivity implements IOCRCallBack {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        //Layout for other fragments:
 
         //OCR Variables
         mIOCRCallBack = this;
@@ -488,46 +496,30 @@ public class Home extends AppCompatActivity implements IOCRCallBack {
 
 
             Log.d("OCR Output", result);
-            // Preview Search Results:
 
-            //Search Results:
+            // GEt Search Results:
 
-            if (!result.trim().equals("")) {
+            mProgressDialog = new ProgressDialog(Home.this);
+            mProgressDialog.setTitle("Searching from Quran....");
+            mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+
+            if (mProgressDialog != null && mProgressDialog.isShowing())
+                mProgressDialog.dismiss();
+
+            List<Ayat> result_ayats = getSearchResults(result);
+
+            if(!(result_ayats.size() == 0)){
                 ListView searchResultsView = findViewById(R.id.search_results);
-                List<Ayat> ayats = Quran.getInstance(Home.this).search(result);
-                ;
-                if (ayats.size() == 0) {
-
-                    if(ayats.size() == 0){
-                        String[] words = result.split("\\s+");
-                        for (int i = 0; i < words.length; i++) {
-                            // You may want to check for a non-word character before blindly
-                            // performing a replacement
-                            // It may also be necessary to adjust the character class
-                            words[i] = words[i].replaceAll("[^\\w]", "");
-                            List<Ayat> ayats_2 = Quran.getInstance(Home.this).search(words[i]);
-
-                            for (Ayat ayat : ayats_2) {
-                                if (!ayats.contains(ayat)) {
-                                    ayats.add(ayat);
-                                }
-                                if(ayats.size()>5){
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if(ayats.size() == 0)
-                    {
-                        findViewById(R.id.no_results).setVisibility(View.VISIBLE);
-                    }
-                }
-                AyatAdapter adapter = new AyatAdapter(ayats, Home.this);
+                AyatAdapter adapter = new AyatAdapter(getSearchResults(result), Home.this);
                 searchResultsView.setAdapter(adapter);
-            } else {
+            }
+            else {
                 findViewById(R.id.no_results).setVisibility(View.VISIBLE);
             }
+
+
             //findViewById(R.id.ocr_input).setVisibility(View.VISIBLE);
             //TextView ocr_input = (TextView) findViewById(R.id.ocr_input);
             //ocr_input.setText(result);
@@ -541,13 +533,124 @@ public class Home extends AppCompatActivity implements IOCRCallBack {
             if (result.trim().equals("")) {
                 Toast.makeText(this, "Invalid Input image", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+
             }
 
         } catch (Exception ex) {
-            Toast.makeText(Home.this, "Server Error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Home.this, "Error "+ex.getMessage(), Toast.LENGTH_LONG).show();
+            Log.d("Search Error", "Error: "+ex.getMessage());
         }
 
+    }
+
+    private List<Ayat> getSearchResults(String text){
+        // Preview Search Results:
+
+        //Search Results:
+//
+//            if (!result.trim().equals("")) {
+//                ListView searchResultsView = findViewById(R.id.search_results);
+//                List<Ayat> ayats = Quran.getInstance(Home.this).search(result);
+//
+//                if (ayats.size() == 0) {
+//
+//                    if(ayats.size() == 0){
+//                        String[] words = result.split("\\s+");
+//                        for (int i = 0; i < words.length; i++) {
+//                            // You may want to check for a non-word character before blindly
+//                            // performing a replacement
+//                            // It may also be necessary to adjust the character class
+//                            words[i] = words[i].replaceAll("[^\\w]", "");
+//                            List<Ayat> ayats_2 = Quran.getInstance(Home.this).search(words[i]);
+//
+//                            for (Ayat ayat : ayats_2) {
+//                                if (!ayats.contains(ayat)) {
+//                                    ayats.add(ayat);
+//                                }
+//                                if(ayats.size()>5){
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    if(ayats.size() == 0)
+//                    {
+//                        findViewById(R.id.no_results).setVisibility(View.VISIBLE);
+//                    }
+//                }
+//
+//                AyatAdapter adapter = new AyatAdapter(ayats, Home.this);
+//                searchResultsView.setAdapter(adapter);
+//            }
+//
+//            else {
+//                findViewById(R.id.no_results).setVisibility(View.VISIBLE);
+//            }
+//
+//
+        //Search 2: By spliting each word:
+
+        String[] words = text.split("\\s+");
+
+        List<Ayat>[] resultsForWord = new List[words.length];
+        for (int i = 0; i < words.length; i++) {
+            // You may want to check for a non-word character before blindly
+            // performing a replacement
+            // It may also be necessary to adjust the character class
+            words[i] = words[i].replaceAll("[^\\w]", "");
+            resultsForWord[i] = Quran.getInstance(Home.this).search(words[i]);
+        }
+
+        List<Search> counted_searches = new ArrayList<>();
+
+        int most_repeat_count = 0;
+        Ayat most_repeated_ayat = new Ayat();
+
+        for (int i = 0; i < resultsForWord.length; i++){
+            for (Ayat ayat : resultsForWord[i]) {
+
+                int temp_repeat_count = 0;
+                Ayat temp_most_repeated_ayat = new Ayat();
+                for (int j=0; j<resultsForWord.length; j++){
+                    if(i!=j  && resultsForWord[j].contains(ayat)){
+
+                        //temp_most_repeated_ayat = resultsForWord[j];
+                        for (Ayat ayat_2 : resultsForWord[i]){
+                            if(ayat == ayat_2){
+                                temp_repeat_count++;
+                                //temp_most_repeated_ayat = ayat_2;
+                            }
+                        }
+                        if (temp_repeat_count >= most_repeat_count){
+                            most_repeated_ayat = ayat;
+                            most_repeat_count = temp_repeat_count;
+                            Search search = new Search(most_repeated_ayat, most_repeat_count);
+                            counted_searches.add(search);
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+
+        //findViewById(R.id.no_results).setVisibility(View.VISIBLE);
+        //TextView count = (TextView) findViewById(R.id.message);
+        //count.setText(most_repeat_count+"");
+        Toast.makeText(Home.this,  most_repeat_count+"", Toast.LENGTH_LONG);
+        Log.d("Repeat Count", most_repeat_count+"");
+
+        List<Ayat> result_ayats = new ArrayList<>();
+        for (Search search : counted_searches){
+            if(search.count == most_repeat_count && (!result_ayats.contains(search.ayat))){
+                result_ayats.add(search.ayat);
+            }
+        }
+
+        return result_ayats;
     }
 
     //Check Internet State
