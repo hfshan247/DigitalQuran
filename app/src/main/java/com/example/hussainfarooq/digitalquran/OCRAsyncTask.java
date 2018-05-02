@@ -29,6 +29,7 @@ public class OCRAsyncTask extends AsyncTask {
     //Javascript engine
 //    private static ScriptEngine engine = new ScriptEngineManager()
 //            .getEngineByName("JavaScript");
+    private ProgressDialog getmProgressDialog;
 
     private static final String TAG = OCRAsyncTask.class.getName();
 
@@ -63,7 +64,7 @@ public class OCRAsyncTask extends AsyncTask {
     @Override
     protected void onPreExecute() {
         mProgressDialog = new ProgressDialog(mActivity);
-        mProgressDialog.setTitle("Wait while processing....");
+        mProgressDialog.setTitle("Extracting Text From Image....");
         mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
